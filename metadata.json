@@ -1,0 +1,6 @@
+{
+  "name": "Foundry Web Studio - Websites & Billing for Small Business",
+  "description": "Bespoke website packages for small businesses with automated milestone billing, subscription care plans, and real-time project tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
