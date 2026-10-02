@@ -27,27 +27,31 @@ export default function App() {
   const [currentView, setCurrentView] = useState<ActiveView>('storefront');
   const [activeProjectId, setActiveProjectId] = useState<string>(INITIAL_PROJECTS[0].id);
 
-  // Core Data State (with localStorage persistence)
+  // Core Data State (with safe localStorage persistence)
   const [projects, setProjects] = useState<Project[]>(() => {
-    const saved = localStorage.getItem('foundry_projects');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error('Failed to parse saved projects', e);
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const saved = window.localStorage.getItem('foundry_projects');
+        if (saved) {
+          return JSON.parse(saved);
+        }
       }
+    } catch (e) {
+      console.warn('LocalStorage unavailable or restricted:', e);
     }
     return INITIAL_PROJECTS;
   });
 
   const [invoices, setInvoices] = useState<Invoice[]>(() => {
-    const saved = localStorage.getItem('foundry_invoices');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error('Failed to parse saved invoices', e);
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const saved = window.localStorage.getItem('foundry_invoices');
+        if (saved) {
+          return JSON.parse(saved);
+        }
       }
+    } catch (e) {
+      console.warn('LocalStorage unavailable or restricted:', e);
     }
     return INITIAL_INVOICES;
   });
@@ -65,13 +69,25 @@ export default function App() {
     businessType: ''
   });
 
-  // Sync to local storage
+  // Sync to local storage safely
   useEffect(() => {
-    localStorage.setItem('foundry_projects', JSON.stringify(projects));
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem('foundry_projects', JSON.stringify(projects));
+      }
+    } catch (e) {
+      console.warn('Failed to save projects to localStorage:', e);
+    }
   }, [projects]);
 
   useEffect(() => {
-    localStorage.setItem('foundry_invoices', JSON.stringify(invoices));
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem('foundry_invoices', JSON.stringify(invoices));
+      }
+    } catch (e) {
+      console.warn('Failed to save invoices to localStorage:', e);
+    }
   }, [invoices]);
 
   // Handle new small business onboarding
